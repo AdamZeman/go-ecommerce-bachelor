@@ -1,0 +1,82 @@
+package iomIssueOrder
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+)
+
+templ IssueOrderManagement(orders []goqueries.GetOrdersFillUserConvByStatusRow){
+    <div class="hidden" hx-get="/api/remove-popup" hx-trigger="load" hx-target="#modal-container" hx-swap="innerHTML"></div>
+
+    <div class="relative flex flex-col flex-1 p-4 gap-4">
+         <div class="relative overflow-x-auto">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-600 ">
+                <thead class="text-xs text-gray-100 uppercase bg-masala-950 ">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            ID
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            User Email
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Total Price
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            View Conversation
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Mark as Done
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    for _, order := range orders{
+                        <tr
+                            class="bg-white border-b border-gray-200 transition duration-200 "
+                        >
+                             <input
+                                 id={fmt.Sprint("id-", order.ID)}
+                                 name="id"
+                                 value={fmt.Sprint("", order.ID)}
+                                 class="hidden"
+                             >
+
+                            <th scope="row" class="px-6 py-4 font-medium">
+                                {fmt.Sprint("", order.ID)}
+                            </th>
+                            <td class="px-6 py-4">
+                                {order.Email}
+                            </td>
+                            <td class="px-6 py-4">
+                                {fmt.Sprintf("$%.2f", float64(order.TotalPrice) / 100)}
+                            </td>
+
+                            <th scope="row" class="px-6 py-4 font-medium">
+                                   <a
+                                       type="button"
+                                       class="rounded-full px-2 py-1 bg-yellow-600 text-white hover:opacity-80 "
+                                       href={templ.SafeURL(fmt.Sprintf(`/messenger/%d`, order.Convid))}
+                                   >
+                                       View Issue
+                                   </a>
+                           </th>
+                           <th scope="row" class="px-6 py-4 font-medium">
+                               <button
+                                   type="button"
+                                   class="bg-masala-950 text-white px-6 py-2 hover:opacity-80 transition duration-200"
+                                   hx-post="/api/iom/edit-issue-order"
+                                   hx-target="#iom-content"
+                                   hx-swap="innerHTML"
+                                   hx-include={fmt.Sprint("#id-", order.ID)}
+                               >
+                                   Mark as Done
+                               </button>
+                           </th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+}

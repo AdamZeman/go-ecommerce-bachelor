@@ -1,0 +1,67 @@
+package iomSpecial
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+)
+
+templ SpecialManagement(categories []goqueries.Special){
+    <div class="hidden" hx-get="/api/remove-popup" hx-trigger="load" hx-target="#modal-container" hx-swap="innerHTML"></div>
+
+    <div class="relative flex flex-col flex-1 p-4 gap-4">
+        <div class="flex gap-4 justify-end items-center">
+            <a
+               href="#"
+               class="flex font-medium text-sm px-5 py-2.5 text-white bg-masala-950 transition-all duration-300 overflow-hidden rounded-lg"
+               hx-get="/api/show-add-special"
+               hx-trigger="click"
+               hx-target="#modal-container"
+               hx-swap="innerHTML"
+            >
+               Add
+            </a>
+
+        </div>
+         <div class="relative overflow-x-auto">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-600 ">
+                <thead class="text-xs text-gray-100 uppercase bg-masala-950 ">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            ID
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Category Name
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    for _, special := range categories{
+                        <tr
+                            class="bg-white border-b hover:bg-masala-950 hover:border-gray-700 hover:text-white border-gray-200 transition duration-200 cursor-pointer"
+                            hx-get="/api/show-edit-special"
+                            hx-trigger="click"
+                            hx-target="#modal-container"
+                            hx-swap="innerHTML"
+                            hx-include={fmt.Sprint("#id-", special.ID)}
+                        >
+                            <input
+                                id={fmt.Sprint("id-", special.ID)}
+                                name="id"
+                                value={fmt.Sprint("", special.ID)}
+                                class="hidden"
+                            >
+                            <th scope="row" class="px-6 py-4 font-medium">
+                                {fmt.Sprint("", special.ID)}
+                            </th>
+                            <td class="px-6 py-4">
+                                {special.Name}
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+}

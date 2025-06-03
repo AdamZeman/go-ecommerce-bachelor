@@ -1,0 +1,43 @@
+package components
+
+templ UiAmountInput(){
+
+     <div class="w-1/2 flex flex-col gap-2">
+        <h1 class="text-gray-600">Amount</h1>
+        <div class="flex items-center">
+        <button
+            type="button"
+            class="w-8 h-8 bg-white border border-gray-800 text-gray-800 text-lg font-bold flex justify-center items-center hover:opacity-80"
+            onclick=changeQuantity(-1)
+        >-</button>
+          <input
+            type="number"
+            id="amount"
+            name="amount"
+            class="w-12 h-8 bg-white text-center text-lg border border-white"
+            value="1"
+            min="1"
+            hx-get="/api/update-product-info"
+            hx-trigger="input changed, load"
+            hx-target="#dummy-target"
+            hx-include="[name], #amount"
+          >
+            <button
+                type="button"
+                class="w-8 h-8 bg-white border border-gray-800 text-gray-800 text-lg font-bold flex justify-center items-center hover:opacity-80"
+                onclick=changeQuantity(+1)
+            >+</button>
+        </div>
+    </div>
+
+    <script>
+      function changeQuantity(amount){
+        let input = document.getElementById("amount");
+        let newValue = parseInt(input.value) + amount;
+        if (newValue >= 1) {
+          input.value = newValue;
+        }
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    </script>
+}

@@ -1,0 +1,137 @@
+package components
+
+import (
+    "ecomm-go/db/goqueries"
+    "ecomm-go/types"
+    "math"
+    "fmt"
+    )
+
+func CalculateReviewData(reviews []goqueries.GetReviewsFillUserByProductIDRow) types.CalculateReviewData {
+    data := types.CalculateReviewData{}
+
+    totalRating := int32(0)
+    totalReviews := len(reviews)
+
+    for _, item := range reviews {
+        switch item.Rating {
+        case 1:
+            data.One++
+        case 2:
+            data.Two++
+        case 3:
+            data.Three++
+        case 4:
+            data.Four++
+        case 5:
+            data.Five++
+        }
+        totalRating += item.Rating
+    }
+
+    data.All = totalReviews
+    if totalReviews > 0 {
+        data.Average = math.Round(float64(totalRating)/float64(totalReviews)*10) / 10
+    }
+
+    return data
+}
+
+css primaryClassName(percent int) {
+	width: { templ.SafeCSSProperty(fmt.Sprintf("%.d%%;", percent)) };
+}
+
+func getPercentage(specific int, all int) int{
+    if all > 0 {
+        percentage := (specific* 100) / (all)
+        return percentage
+    } else {
+        return 50
+    }
+
+}
+
+
+
+templ Rating(reviews []goqueries.GetReviewsFillUserByProductIDRow) {
+
+     {{data := CalculateReviewData(reviews)}}
+
+
+	 <div class="bg-white p-10 rounded-lg w-full border">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold">User Rating</h2>
+                <div class="flex space-x-1">
+                    for i := 1; i <= int(math.Round(data.Average)); i++ {
+                        <span class="text-yellow-400 text-2xl">&#9733;</span>
+
+                    }
+                    for i := 1; i <= 5 - int(math.Round(data.Average)); i++ {
+                        <span class="text-gray-300 text-2xl">&#9733;</span>
+
+                    }
+                </div>
+            </div>
+            <p class="text-gray-600 mt-2">{fmt.Sprintf("%.1f average based on %d reviews. ", data.Average, data.All)}</p>
+            <hr class="my-4 border-gray-300">
+
+            <div class="space-y-2">
+                <div class="flex items-center justify-between text-gray-700">
+                    <span>5 star</span>
+                    <div class="w-3/4 h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div class={"bg-yellow-400 h-full w-0", templ.KV(primaryClassName( getPercentage(data.Five, data.All)), true)}></div>
+
+                    </div>
+                    <span>{fmt.Sprint("",data.Five)}</span>
+                </div>
+                <div class="flex items-center justify-between text-gray-700">
+                    <span>4 star</span>
+                    <div class="w-3/4 h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div class={"bg-yellow-400 h-full w-0", templ.KV(primaryClassName( getPercentage(data.Four, data.All)), true)}></div>
+                    </div>
+                    <span>{fmt.Sprint("",data.Four)}</span>
+                </div>
+                <div class="flex items-center justify-between text-gray-700">
+                    <span>3 star</span>
+                    <div class="w-3/4 h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div class={"bg-yellow-400 h-full w-0", templ.KV(primaryClassName( getPercentage(data.Three, data.All)), true)}></div>
+                    </div>
+                    <span>{fmt.Sprint("",data.Three)}</span>
+                </div>
+                <div class="flex items-center justify-between text-gray-700">
+                    <span>2 star</span>
+                    <div class="w-3/4 h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div class={"bg-yellow-400 h-full w-0", templ.KV(primaryClassName( getPercentage(data.Two, data.All)), true)}></div>
+                    </div>
+                    <span>{fmt.Sprint("",data.Two)}</span>
+                </div>
+                <div class="flex items-center justify-between text-gray-700">
+                    <span>1 star</span>
+                    <div class="w-3/4 h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div class={"bg-yellow-400 h-full w-0", templ.KV(primaryClassName( getPercentage(data.One, data.All)), true)}></div>
+                    </div>
+                    <span>{fmt.Sprint("",data.One)}</span>
+                </div>
+            </div>
+
+            <hr class="my-4 border-gray-300">
+
+            <div class="flex flex-col gap-4">
+                <div class="font-bold text-2xl">Review this product</div>
+                <div class="text-md">Share your thoughts with other customers</div>
+                <button
+                    class="rounded-full px-6 py-3 text-white bg-yellow-500 hover:text-white"
+                    type="button"
+                >Write a customer review</button>
+
+            </div>
+
+
+
+
+
+
+
+
+        </div>
+}

@@ -1,0 +1,64 @@
+package pages
+
+import (
+	"ecomm-go/db/goqueries"
+	"fmt"
+)
+
+templ Favourites(favouriteItems []goqueries.GetFavouritesByIdRow ) {
+    <div id="dummy-target"></div>
+    <div class="pb-4">
+            <div class="flex gap-4 pb-6">
+                <a href="/orders" class="w-1/3 border-gray-200 border-b-2  pb-4 text-center hover:border-gray-800 transition-all duration-300">Orders</a>
+                <a href="/favourites" class="w-1/3 font-bold text-gray-800 border-gray-800 border-b-2  pb-4 text-center hover:opacity-80 transition-all duration-300">Favourites</a>
+                <a href="/rooms" class="w-1/3 border-gray-200 border-b-2 pb-4 text-center hover:border-gray-800 transition-all duration-300">Messenger</a>
+            </div>
+            <div class="text-3xl font-bold pb-10">Favourites</div>
+            <div class="my-4 border-gray-200 border w-full"></div>
+            <div class="flex gap-8">
+                <div class="flex flex-1 gap-4 flex-col">
+                    for _, favouriteItem := range favouriteItems {
+                        {{ itemID := fmt.Sprintf("favouriteItem-%d", favouriteItem.ProductID) }}
+
+                        <div id={itemID} class="flex gap-4 p-4 border border-gray-200 rounded-xl">
+                            <div>
+                                <img
+                                    src={fmt.Sprintf("https://picsum.photos/seed/%d/200/200", favouriteItem.ProductID)}
+                                    alt={favouriteItem.Name_2}
+                                    class="w-24 h-24 object-cover rounded-lg"
+                                />
+                            </div>
+                            <div class="flex flex-1 flex-col">
+                                <div class="flex flex-col">
+                                    <a href={templ.SafeURL(fmt.Sprint("/products/",favouriteItem.ProductID ))}>
+                                        <h1>Product</h1>
+                                        <h1>{favouriteItem.Name_2}</h1>
+                                    </a>
+                                </div>
+                                <div class="flex flex-1 justify-between">
+
+                                </div>
+                            </div>
+                            <div>
+
+                              <button
+                                 class="bg-transparent hover:text-gray-800 border-[1px] border-gray-200"
+                                  hx-post="/api/remove-from-favourites"
+                                  hx-vals={ fmt.Sprintf(`{"favouritesItemProductId": %d}`, favouriteItem.ProductID) }
+                                  hx-target="#dummy-target"
+                              >
+                                <svg class="w-8 h-8 cursor-pointer" fill="currentColor" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M202.82861,197.17188a3.99991,3.99991,0,1,1-5.65722,5.65624L128,133.65723,58.82861,202.82812a3.99991,3.99991,0,0,1-5.65722-5.65624L122.343,128,53.17139,58.82812a3.99991,3.99991,0,0,1,5.65722-5.65624L128,122.34277l69.17139-69.17089a3.99991,3.99991,0,0,1,5.65722,5.65624L133.657,128Z"/>
+                                </svg>
+                              </button>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+
+}

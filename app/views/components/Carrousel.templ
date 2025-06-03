@@ -1,0 +1,51 @@
+package components
+import (
+    "strconv"
+    "ecomm-go/db/goqueries"
+)
+
+script ArrowFunc(el, container string, percentage int) {
+    console.log(el);
+    document.getElementById(el).addEventListener('click', function() {
+    const displace = window.innerWidth * (percentage / 100);
+      document.getElementById(container).scrollBy({
+        left: displace,
+        behavior: 'smooth'
+      });
+    });
+}
+
+func toString(num int32) string{
+    return strconv.Itoa(int(num));
+}
+
+
+templ Carrousel(id string, h string, w string, products []goqueries.GetProductsByCategoriesAndNameRow){
+
+    <div class="py-1">
+        <div class="relative flex items-center gap-6">
+            <div id={"left-arrow-" + id} class="z-20 absolute m-1 rounded-xl arrow p-4 text-white content-center left-0 h-1/2 transition-opacity duration-300 hover:opacity-100 opacity-50 cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+              </svg>
+            </div>
+
+            <div id={"scroll-container-" + id} class={" flex gap-8 overflow-x-auto overflow-hidden whitespace-nowrap flex-1 scrollbar-hide space-x-1 h-"+h}>
+                  for _, item := range products {
+                      @ProductCard(item, false)
+                  }
+            </div>
+
+             <div id={"right-arrow-" + id} class="z-20 absolute m-1 rounded-xl arrow p-4 text-white content-center  right-0 h-1/2 transition-opacity duration-300 hover:opacity-100 opacity-50 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+
+            @ArrowFunc(("left-arrow-"+id), ("scroll-container-"+id), -100)
+            @ArrowFunc(("right-arrow-"+id), ("scroll-container-"+id), 100)
+
+        </div>
+    </div>
+
+}

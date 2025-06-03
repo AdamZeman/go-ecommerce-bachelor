@@ -1,0 +1,46 @@
+package components
+
+import ("fmt")
+
+script ArrowFuncHeader(el, container string, percentage int) {
+    console.log(el);
+    document.getElementById(el).addEventListener('click', function() {
+    const displace = document.getElementById(container).offsetWidth * (percentage / 100);
+      document.getElementById(container).scrollBy({
+        left: displace,
+        behavior: 'smooth'
+      });
+    });
+}
+
+
+templ CarrouselHeader(id string){
+    <div class="py-4">
+        <div class="relative flex">
+            <div id={"scroll-container-" + id} class={" overflow-x-auto overflow-hidden whitespace-nowrap flex-1 scrollbar-hide h-[400px] rounded-3xl"}>
+                for index, _ := range []string{"1","2", "3"} {
+                    <div class={"inline-block h-[400px] w-full relative transition-transform duration-500 hover:scale-110  z-1 rounded-3xl"}>
+                        <img src={fmt.Sprintf("https://picsum.photos/seed/%d/1200/1200", index+22) } class={"w-full object-cover h-[400px]"} alt="image"></img>
+                    </div>
+                  }
+            </div>
+
+            <div id={"left-arrow-" + id} class="m-1 rounded-xl arrow p-4 text-white content-center absolute left-4 top-1/2 transform -translate-y-1/2 transition-opacity duration-300 hover:opacity-100 opacity-50 bg-black/50">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+              </svg>
+            </div>
+
+            <div id={"right-arrow-" + id} class="m-1 rounded-xl arrow p-4 text-white content-center absolute right-4 top-1/2 transform -translate-y-1/2 transition-opacity duration-300 hover:opacity-100 opacity-50 bg-black/50">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+
+            @ArrowFuncHeader(("left-arrow-"+id), ("scroll-container-"+id), -100)
+            @ArrowFuncHeader(("right-arrow-"+id), ("scroll-container-"+id), 100)
+
+        </div>
+    </div>
+
+}

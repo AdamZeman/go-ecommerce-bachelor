@@ -1,0 +1,40 @@
+package components
+
+import (
+    "ecomm-go/db/goqueries"
+)
+
+templ Review(review goqueries.GetReviewsFillUserByProductIDRow) {
+       <div class="p-6 hover transition duration-300 ease-in-out hover:-translate-y-4 border rounded-lg">
+            <div class="flex justify-between">
+                <div class="flex gap-4 mb-4">
+                    <img
+                        src={review.AvatarUrl.String}
+                        class={"w-full object-cover h-10 rounded-full"}
+                        alt="image"
+                        loading="lazy"
+                        >
+                    </img>
+
+                    <div>
+                        <div class="text-lg">{review.Name}</div>
+                        <div class="text-gray-500 text-sm">{review.Email}</div>
+                    </div>
+                </div>
+                <div class="flex">
+                    for i := 1; i <= int(review.Rating); i++ {
+                        <span class="text-yellow-400 text-lg">&#9733;</span>
+
+                    }
+                    for i := 1; i <= 5 - int(review.Rating); i++ {
+                        <span class="text-gray-300 text-lg">&#9733;</span>
+
+                    }
+                </div>
+            </div>
+
+            <div class="text-gray-800 text-sm">
+                {review.Content}
+            </div>
+       </div>
+}

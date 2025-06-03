@@ -1,0 +1,62 @@
+package components
+
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+)
+templ QuickBasket(basketItems []goqueries.GetBasketItemsByUserIdRow, totalPrice int32){
+       <div class="flex flex-1 gap-4 flex-col ">
+            if len(basketItems) == 0 {
+                <div class="">Empty basket</div>
+            }
+           for _, basketItem := range basketItems {
+               {{ itemID := fmt.Sprintf("basketItem-%d", basketItem.ID) }}
+
+               <div id={itemID} class="flex gap-4 p-4 border border-gray-400 rounded-xl">
+                   <div class="w-16">
+                       <img
+                           src={fmt.Sprintf("https://picsum.photos/seed/%d/60/60", basketItem.ProductID)}
+                           alt={basketItem.Sku}
+                           class="w-16 h-16 object-cover rounded-lg"
+                       />
+                   </div>
+                   <div class="flex flex-1 flex-col text-xs">
+                       <div class="flex flex-col">
+                           <a href={templ.SafeURL(fmt.Sprint("/products/",basketItem.ProductID ))}>
+                               <h1>{basketItem.Name}</h1>
+                           </a>
+                       </div>
+                       <div class="flex flex-1 justify-between">
+                           <div class="flex flex-col">
+                               <h1 class="text-gray-400">Price</h1>
+                               <h1>{fmt.Sprintf("$%.2f",float64(basketItem.Price)/100)}</h1>
+                           </div>
+                           <div class="flex flex-col">
+                               <h1 class="text-gray-400">{basketItem.Option1Name}</h1>
+                               <h1>{basketItem.Option1Value}</h1>
+                           </div>
+                           <div class="flex flex-col">
+                               <h1 class="text-gray-400">{basketItem.Option2Name}</h1>
+                               <h1>{basketItem.Option2Value}</h1>
+                           </div>
+                           <div class="flex flex-col">
+                               <h1 class="text-gray-400">Quantity</h1>
+                               <h1>{fmt.Sprint("",basketItem.Quantity)}</h1>
+                           </div>
+                           <div class="flex flex-col">
+                               <h1 class="text-gray-400">Total Price</h1>
+                                <h1>{fmt.Sprintf("$%.2f", float64(basketItem.Quantity) * float64(basketItem.Price) / 100)}</h1>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           }
+       </div>
+
+
+
+
+
+
+
+}

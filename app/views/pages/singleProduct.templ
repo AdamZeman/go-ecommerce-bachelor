@@ -1,0 +1,190 @@
+package pages
+
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+	"ecomm-go/app/views/components"
+	"ecomm-go/types"
+)
+
+
+templ SingleProduct(user types.CookieUser, product goqueries.Product, option1Values []string, option2Values []string, isFavourite bool, reviews []goqueries.GetReviewsFillUserByProductIDRow, products []goqueries.GetProductsByCategoriesAndNameRow, categories []goqueries.Category) {
+    <div class="flex flex-col gap-10 py-4">
+        <div class="grid md:grid-cols-2 gap-10 ">
+            <div class="p-4 bg-gray-50 rounded-lg flex items-center justify-center">
+                <img
+                    src={fmt.Sprintf("https://picsum.photos/seed/%d/600/600", product.ID)}
+                    alt={product.Name}
+                    class="w-full md:h-[500px] object-cover rounded-lg"
+                />
+            </div>
+            <form class="" hx-post="/api/add-to-basket" hx-target="#addToBasketBtn">
+                <label>
+                    <input
+                        value={fmt.Sprint("", product.ID)}
+                        name="product_id"
+                        class="hidden"
+                    >
+                </label>
+                <div id="dummy-target"></div>
+                <div class="flex flex-wrap flex-1 gap-4">
+                    for _, item := range categories{
+                        <div class="rounded-full px-4 py-1 bg-hunter-green-200 text-hunter-green-800">{item.Name}</div>
+
+                    }
+                </div>
+
+                {{ var favouriteClasses string }}
+                if isFavourite {
+                    {{ favouriteClasses = "fill-timber-green-700 group-hover/love:fill-transparent"}}
+                }else{
+                    {{ favouriteClasses = "fill-transparent group-hover/love:fill-timber-green-700"}}
+                }
+
+                <div class="flex justify-between relative">
+                    <h1 class="pt-4 font-bold text-3xl">{product.Name}</h1>
+
+                    if user.Role >= 1 {
+                        <div
+                            class="group/love absolute right-2 top-2 z-20 bg-hawaiian-tan-50 rounded-full bg-opacity-50 p-1"
+                            hx-post="/api/add-to-favourites"
+                            hx-target={fmt.Sprint("#love-icon-",product.ID)}
+                            hx-vals={fmt.Sprintf(`{"product_id":"%d"}`, product.ID)}
+                            hx-swap="outerHTML"
+                            hx-trigger="click"
+                        >
+                          @components.LoveIcon(favouriteClasses, product.ID)
+                        </div>
+                    }
+
+                </div>
+                <h1 class="pt-4 font-bold text-lg text-gray-800 ">from ${fmt.Sprintf("%.2f", float64(product.Price)/100)}</h1>
+                <h1 class="pt-4">{product.Description}</h1>
+                <div class="mt-10 p-4 bg-hawaiian-tan-50 rounded-2xl flex flex-col gap-4">
+                    <h1 class="font-bold text-lg">Options</h1>
+                    <div>
+                        <h3 class="text-gray-600 mb-2">{product.Option1Name}</h3>
+                        <div class="flex justify-between flex-1">
+                            <div class="flex gap-4 flex-row-reverse">
+                                for _, optionValueItem := range option1Values {
+                                    <label class="flex items-center px-5 py-3 w-full bg-hawaiian-tan-50 text-sm cursor-pointer border-[1px] border-gray-500 rounded-lg transition-all duration-300 hover:border-hawaiian-tan-700  has-[input:checked]:border-hawaiian-tan-700 has-[input:checked]:text-hawaiian-tan-700">
+                                        <input
+                                            value={fmt.Sprint("", optionValueItem)}
+                                            name="option1value"
+                                            class="absolute opacity-0 h-0 w-0"
+                                            type="radio"
+                                            hx-get="/api/update-product-info"
+                                            hx-trigger="input clicked"
+                                            hx-target="#dummy-target"
+                                            hx-include="[name], #amount"
+                                            checked
+                                        >
+                                        {optionValueItem}
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-gray-600 mb-2">{product.Option2Name}</div>
+                        <div class="flex justify-between flex-1">
+
+                            <div class="flex gap-4 flex-row-reverse">
+                                for _, optionValueItem := range option2Values {
+                                    <label class="flex items-center px-5 py-3 w-full bg-hawaiian-tan-50 text-sm cursor-pointer border-[1px] border-gray-500 rounded-lg transition-all duration-300 hover:border-hawaiian-tan-700  has-[input:checked]:border-hawaiian-tan-700 has-[input:checked]:text-hawaiian-tan-700">
+                                        <input
+                                            value={fmt.Sprint("", optionValueItem)}
+                                            name="option2value"
+                                            class="absolute opacity-0 h-0 w-0"
+                                            type="radio"
+                                            hx-get="/api/update-product-info"
+                                            hx-trigger="input clicked"
+                                            hx-target="#dummy-target"
+                                            hx-include="[name], #amount"
+                                            checked
+                                        >
+                                        {optionValueItem}
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                       @components.UiAmountInput()
+
+                        <div class="w-1/2 flex flex-col gap-2">
+                            <div class="relative group inline-block cursor-pointer">
+                                  <span class="text-gray-600 underline">
+                                    In stock
+                                  </span>
+                                <div
+                                    class="absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 scale-0 transform rounded-lg bg-black px-3 py-2 text-xs text-white opacity-0 transition-all group-hover:scale-100 group-hover:opacity-100">
+                                    Only items in stock are shipped immediately.<br/>
+                                    Ordering more may delay delivery.
+                                </div>
+                            </div>
+                            <h1
+                                id="stock-info"
+                                hx-get="/api/update-product-info"
+                                hx-trigger="load"
+                                hx-target="#dummy-target"
+                                hx-include="[name], #amount"
+                            >
+                            0
+                            </h1>
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-gray-600">Total Price</h1>
+                        <h1
+                            id="total-price"
+                            hx-get="/api/update-product-info"
+                            hx-trigger="load"
+                            hx-target="#dummy-target"
+                            hx-include="[name], #amount"
+                        >
+                        $0
+                        </h1>
+                    </div>
+
+                    <div class="flex gap-4">
+                        if user.Role >= 1 {
+                            <button
+                                class="w-1/2 text-center bg-hunter-green-700 text-white hover:opacity-80 transform transition-all duration-300 rounded-full p-2 border-hunter-green-700 border"
+                                id="addToBasketBtn"
+                            >
+                                Add
+                            </button>
+
+                            <a href="/basket" class="w-1/2  text-center bg-white text-gray-800 hover:opacity-80 transform transition-all duration-300 rounded-full p-2 border-hunter-green-700 border">
+                                Show Basket
+                            </a>
+                        } else{
+                            <div
+                                class="w-full text-center bg-white text-hunter-green-700 hover:opacity-80 transform transition-all duration-300 rounded-full p-2 border-hunter-green-700 border"
+                                >Please sign to buy any product
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        if len(products) > 0 {
+            <div class="">
+                @components.Carrousel("myCar", "72", "72", products)
+            </div>
+        }
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-10">
+            <div class="lg:col-span-1 w-full">
+                @components.Rating(reviews)
+            </div>
+
+            <div class="lg:col-span-2 grid-cols-1 grid lg:grid-cols-2 gap-6 auto-rows-min">
+                for _, review := range reviews {
+                    @components.Review(review)
+                }
+            </div>
+        </div>
+    </div>
+}

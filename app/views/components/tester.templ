@@ -1,0 +1,20 @@
+package components
+
+templ TETETET(){
+    <div>
+      <!-- Overlay -->
+      <div class="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+
+      <!-- Modal content -->
+      <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-xl shadow-lg z-50 w-full max-w-md">
+        <h2 class="text-xl font-bold mb-4">Modal Title</h2>
+        <p>This is your modal content.</p>
+        <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+                hx-get="/modal-close"
+                hx-target="#modal-root"
+                hx-swap="innerHTML">
+          Close
+        </button>
+      </div>
+    </div>
+}

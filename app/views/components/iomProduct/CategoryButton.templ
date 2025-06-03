@@ -1,0 +1,46 @@
+package iomProduct
+
+import (
+    "fmt"
+    "ecomm-go/db/goqueries"
+)
+
+templ CategoryButton(productID int32, category goqueries.GetCategoriesFilteredProductIDRow){
+
+    {{ var classes string}}
+    if category.HasProduct {
+        {{classes = "bg-green-300"}}
+    }else{
+        {{classes = "bg-white "}}
+    }
+    <tr
+        class={classes + " border-b hover:bg-masala-950 hover:border-gray-700 hover:text-white border-gray-200 transition duration-200 cursor-pointer "}
+        hx-post="/api/product-category-switch"
+        hx-target="#modal-container"
+        hx-swap="innerHTML"
+        hx-include={fmt.Sprintf(`#product-id-%d, #category-id-%d, #is-true-%d`, productID, category.ID, category.ID)}
+    >
+
+        <input
+            id={fmt.Sprint("category-id-", category.ID)}
+            name="category-id"
+            value={fmt.Sprint("", category.ID)}
+            class="hidden"
+        >
+        <input
+            id={fmt.Sprint("is-true-", category.ID)}
+            name="is-true"
+            value={fmt.Sprint("", category.HasProduct)}
+            class="hidden"
+        >
+
+        <th scope="row" class="px-6 py-4 font-medium">
+            {fmt.Sprint("", category.ID)}
+        </th>
+
+        <td class="px-6 py-4">
+            {category.Name}
+        </td>
+    </tr>
+
+}

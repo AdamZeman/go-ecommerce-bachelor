@@ -1,0 +1,45 @@
+package iomShared
+
+
+templ ActionList() {
+    <div class="flex flex-col bg-masala-50 p-6 rounded-md w-[300px] gap-8">
+        <div class="">
+            <h2 class="text-lg font-semibold text-black border-b border-gray-700 pb-2 mb-4">
+                Product
+            </h2>
+            <div class="flex flex-col gap-2">
+                @SingleButton("/api/show-product-management", "Product Management")
+                @SingleButton("/api/show-variant-management", "Variant Management")
+
+            </div>
+        </div>
+        <div class="">
+            <h2 class="text-lg font-semibold text-black border-b border-gray-700 pb-2 mb-4">
+                Category
+            </h2>
+            <div class="flex flex-col gap-2">
+                @SingleButton("/api/show-category-management", "Category Management")
+            </div>
+        </div>
+
+        <div class="">
+            <h2 class="text-lg font-semibold text-black border-b border-gray-700 pb-2 mb-4">
+                Special
+            </h2>
+            <div class="flex flex-col gap-2">
+                @SingleButton("/api/show-special-management", "Special Tags Management")
+            </div>
+        </div>
+
+        <div class="">
+            <h2 class="text-lg font-semibold text-black border-b border-gray-700 pb-2 mb-4">
+                Orders
+            </h2>
+            <div class="flex flex-col gap-2">
+                @SingleButton("/api/show-order-management", "Order Management")
+                @SingleButton("/api/show-pending-order-management", "Pending Orders")
+                @SingleButton("/api/show-issue-order-management", "Open Disputes")
+            </div>
+        </div>
+    </div>
+}

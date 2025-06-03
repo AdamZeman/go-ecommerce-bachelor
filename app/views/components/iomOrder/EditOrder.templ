@@ -1,0 +1,119 @@
+package iomOrder
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+)
+
+templ EditOrder(order goqueries.Order, orderItems []goqueries.GetOrderItemsByOrderIDRow) {
+     <div>
+             <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"></div>
+             <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50  bg-white p-8 shadow-md max-w-2xl w-[600px] rounded-xl">
+
+            <div class="flex justify-between mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">View Order</h2>
+                <a
+                   href="#"
+                   class="flex p-5 bg-masala-950 transition-all duration-300 overflow-hidden rounded-full relative justify-center items-center text-white hover:opacity-75"
+                   hx-get="/api/remove-popup"
+                   hx-trigger="click"
+                   hx-target="#modal-container"
+                   hx-swap="innerHTML"
+                >
+                    <span class="absolute font-normal text-lg">
+                        X
+                    </span>
+
+                </a>
+
+            </div>
+            <form
+                hx-post="/api/iom/edit-order"
+                hx-target="#iom-content"
+                hx-swap="innerHTML"
+             >
+                <input
+                    type="text"
+                    id="order-id"
+                    name="order-id"
+                    value={fmt.Sprint("", order.ID)}
+                    class="hidden"
+                >
+
+                <div class="mb-6">
+                    <h3 class="font-semibold mb-2">Status</h3>
+                    <div class="flex gap-3 items-center w-full text-sm font-medium rounded-lg sm:flex">
+                        for _, item := range []string{"pending", "issue", "done"}{
+                            <label
+                                class="flex items-center ps-3 py-3 w-full bg-hawaiian-tan-50 text-sm cursor-pointer border-[1px] border-white rounded-lg transition-all duration-300 hover:border-hawaiian-tan-700  has-[input:checked]:border-hawaiian-tan-700 has-[input:checked]:text-hawaiian-tan-700"
+                            >
+                                if item == order.Status{
+                                    <input id={fmt.Sprint("radio-", item)} type="radio" checked value={item} name="radio-status" class="absolute opacity-0 h-0 w-0">
+                                } else {
+                                    <input id={fmt.Sprint("radio-", item)} type="radio" value={item} name="radio-status" class="absolute opacity-0 h-0 w-0">
+                                }
+                                {item}
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <div class="flex flex-1 gap-4 flex-col mb-4 overflow-y-scroll max-h-[400px]">
+                    for _, orderItem := range orderItems {
+                        {{ itemID := fmt.Sprintf("orderItem-%d", orderItem.ID) }}
+
+                        <div id={itemID} class="flex flex-1 gap-4 p-4 border border-gray-200 rounded-xl">
+                            <div class="w-16">
+                                <img
+                                   src={fmt.Sprintf("https://picsum.photos/seed/%d/60/60", orderItem.ProductID)}
+
+                                    alt={orderItem.Name}
+                                    class="w-16 h-16 object-cover rounded-lg"
+                                />
+                            </div>
+                            <div class="flex flex-1 flex-col text-xs">
+                                <div class="flex flex-col">
+                                    <h1>{orderItem.Name}</h1>
+                                </div>
+                                <div class="flex flex-1 justify-between">
+                                    <div class="flex flex-col">
+                                        <h1 class="text-gray-600">Price</h1>
+                                        <h1>{fmt.Sprintf("$%.2f", float64(orderItem.Price) / 100)}</h1>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <h1 class="text-gray-600">{orderItem.Option1Name}</h1>
+                                        <h1>{orderItem.Option1Value}</h1>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <h1 class="text-gray-600">{orderItem.Option2Name}</h1>
+                                        <h1>{orderItem.Option2Value}</h1>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <h1 class="text-gray-600">Quantity</h1>
+                                        <h1>{fmt.Sprint("",orderItem.Quantity)}</h1>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <h1 class="text-gray-600">Total Price</h1>
+                                        <h1>{fmt.Sprintf("$%.2f", (float64(orderItem.Price) * float64(orderItem.Quantity)) / 100)}</h1>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex gap-4 justify-end">
+
+                    <button
+                        type="submit"
+                        class="bg-hunter-green-400 text-hunter-green-950 font-medium px-6 py-2 hover:opacity-80 transition duration-200 rounded-lg"
+                    >
+                        Confirm Edit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

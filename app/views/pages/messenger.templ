@@ -1,0 +1,12 @@
+package pages
+
+import (
+	"ecomm-go/app/views/components"
+	"ecomm-go/db/goqueries"
+	)
+
+templ Messenger(messages_history []goqueries.GetMessagesByConversationIdRow, firstConversation goqueries.Conversation) {
+    <div>
+        @components.Conversation(messages_history, firstConversation)
+    </div>
+}

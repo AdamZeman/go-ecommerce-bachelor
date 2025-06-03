@@ -1,0 +1,39 @@
+package pages
+
+import "ecomm-go/app/views/components"
+import "ecomm-go/db/goqueries"
+
+templ Products(products []goqueries.GetProductsByCategoriesAndNameRow, categories []goqueries.Category, special []goqueries.Special, isSigned bool) {
+
+    @components.CarrouselHeader("Hello")
+    <div class={"grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-4 pb-10"}>
+        <div class="col-span-1 md:col-span-1">
+            @components.ProductFilter(categories, special)
+        </div>
+
+        <div class="px-4 col-span-1 md:col-span-2 lg:col-span-3">
+            <label for="search"></label>
+            <input
+                type="text"
+                id="search"
+                name="search"
+                class="w-full p-2 mb-4 border rounded-lg"
+                placeholder="Search..."
+                hx-post="/api/show-filtered-products"
+                hx-trigger="input changed delay:300ms"
+                hx-include="[name]"
+                hx-target="#product_container"
+            />
+
+            <div
+                id="product_container"
+                class="flex flex-wrap md:justify-normal justify-center transform duration-500 gap-4"
+            >
+                @components.ProductList(products, 1, isSigned)
+            </div>
+        </div>
+
+    </div>
+
+
+}

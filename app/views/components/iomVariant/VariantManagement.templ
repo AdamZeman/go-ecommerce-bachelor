@@ -1,0 +1,95 @@
+package iomVariant
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+)
+
+templ VariantManagement(variants []goqueries.GetVariantsFilledProductsRow){
+    <div class="hidden" hx-get="/api/remove-popup" hx-trigger="load" hx-target="#modal-container" hx-swap="innerHTML"></div>
+
+    <div class="relative flex flex-col flex-1 p-4 gap-4">
+        <div class="flex gap-4 justify-end items-center">
+            <a
+               href="#"
+               class="flex font-medium text-sm px-5 py-2.5 text-white bg-masala-950 transition-all duration-300 overflow-hidden rounded-lg"
+               hx-get="/api/show-add-variant"
+               hx-trigger="click"
+               hx-target="#modal-container"
+               hx-swap="innerHTML"
+            >
+               Add
+            </a>
+
+        </div>
+         <div class="relative overflow-x-auto">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-600 ">
+                <thead class="text-xs text-gray-100 uppercase bg-masala-950 ">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            ID
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Product Name
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            SKU
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Stock Quantity
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Price
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Option 1 Value
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Option 2 Value
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    for _, variant := range variants{
+                        <tr
+                            class="bg-white border-b hover:bg-masala-950 hover:border-gray-700 hover:text-white border-gray-200 transition duration-200 cursor-pointer"
+                            hx-get="/api/show-edit-variants"
+                            hx-trigger="click"
+                            hx-target="#modal-container"
+                            hx-swap="innerHTML"
+                            hx-include={fmt.Sprint("#id-", variant.ID)}
+                        >
+                            <input
+                                id={fmt.Sprint("id-", variant.ID)}
+                                name="id"
+                                value={fmt.Sprint("", variant.ID)}
+                                class="hidden"
+                            >
+                            <th scope="row" class="px-6 py-4 font-medium">
+                                {fmt.Sprint("", variant.ID)}
+                            </th>
+                            <td class="px-6 py-4">
+                                {variant.Name}
+                            </td>
+                            <td class="px-6 py-4">
+                                {variant.Sku}
+                            </td>
+                            <td class="px-6 py-4">
+                                {fmt.Sprint("", variant.StockQuantity)}
+                            </td>
+                            <td class="px-6 py-4">
+                                {fmt.Sprintf("$%.2f", float64(variant.Price) / 100)}
+                            </td>
+                             <td class="px-6 py-4">
+                                {variant.Option1Value}
+                            </td>
+                            <td class="px-6 py-4">
+                                {variant.Option2Value}
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+}

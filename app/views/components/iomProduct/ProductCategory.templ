@@ -1,0 +1,59 @@
+package iomProduct
+
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+)
+
+templ ProductCategory (productID int32, categories []goqueries.GetCategoriesFilteredProductIDRow){
+     <div>
+             <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"></div>
+             <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50  bg-white p-8 shadow-md max-w-2xl w-[600px] rounded-xl">
+
+
+            <div class="flex justify-between mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">Edit Product Categories</h2>
+                <a
+                   href="#"
+                   class="flex p-5 bg-masala-950 transition-all duration-300 overflow-hidden rounded-full relative justify-center items-center text-white hover:opacity-75"
+                   hx-get="/api/remove-popup"
+                   hx-trigger="click"
+                   hx-target="#modal-container"
+                   hx-swap="innerHTML"
+                >
+                    <span class="absolute font-normal text-lg">
+                        X
+                    </span>
+
+                </a>
+
+            </div>
+
+            <div class="relative overflow-x-auto">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-600 ">
+                    <thead class="text-xs text-gray-100 uppercase bg-masala-950 ">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                ID
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Name
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <input
+                            id={fmt.Sprint("product-id-", productID)}
+                            name="product-id"
+                            value={fmt.Sprint("", productID)}
+                            class="hidden"
+                        >
+                        for _, category := range categories {
+                            @CategoryButton(productID, category)
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

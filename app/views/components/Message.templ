@@ -1,0 +1,49 @@
+package components
+
+
+templ Inside (user_type string, msg string, timestamp string){
+    <!-- Current User's Message -->
+    if user_type == "current" {
+        <div class="flex justify-end">
+            <div class="flex flex-col ">
+                <div class="bg-masala-950 text-white p-3 rounded-lg max-w-xs">
+                    <p>{ msg }</p>
+                </div>
+                <span class="text-xs text-gray-500">{ timestamp }</span>
+            </div>
+        </div>
+
+    } else {
+        <!-- Other User's Message -->
+        <div class="flex">
+            <div class="flex flex-col ">
+                <div class="bg-masala-50 p-3 rounded-lg max-w-xs">
+                    <p class="text-gray-800">{ msg }</p>
+                </div>
+                <span class="text-xs text-gray-500">{ timestamp }</span>
+            </div>
+        </div>
+    }
+}
+
+templ Message(user_type string, msg string, timestamp string, scroll bool) {
+    if scroll {
+        <div hx-swap-oob="beforeend:#chat-room">
+            @Inside(user_type, msg, timestamp)
+        </div>
+        <script>
+            function scrollChatToBottom() {
+                   const chatRoom = document.getElementById("chat_wrapper");
+                   if (chatRoom) {
+                        console.log("sc");
+                       chatRoom.scrollTop = chatRoom.scrollHeight;
+                   }
+               }
+            scrollChatToBottom();
+        </script>
+    } else {
+        <div>
+            @Inside(user_type, msg, timestamp)
+        </div>
+    }
+}

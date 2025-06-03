@@ -1,0 +1,66 @@
+package iomOrder
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+)
+
+templ OrderManagement(orders []goqueries.GetOrdersFillUserRow){
+    <div class="hidden" hx-get="/api/remove-popup" hx-trigger="load" hx-target="#modal-container" hx-swap="innerHTML"></div>
+
+    <div class="relative flex flex-col flex-1 p-4 gap-4">
+        <div class="absolute right-0 top-0 z-10" id="modal-container"></div>
+         <div class="relative overflow-x-auto">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-600 ">
+                <thead class="text-xs text-gray-100 uppercase bg-masala-950 ">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            ID
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            User Email
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Status
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Total Price
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    for _, order := range orders{
+                        <tr
+                            class="bg-white border-b hover:bg-masala-950 hover:border-gray-700 hover:text-white border-gray-200 transition duration-200 cursor-pointer"
+                            hx-get="/api/show-edit-order"
+                            hx-trigger="click"
+                            hx-target="#modal-container"
+                            hx-swap="innerHTML"
+                            hx-include={fmt.Sprint("#id-", order.ID)}
+                        >
+                            <input
+                                id={fmt.Sprint("id-", order.ID)}
+                                name="id"
+                                value={fmt.Sprint("", order.ID)}
+                                class="hidden"
+                            >
+                            <th scope="row" class="px-6 py-4 font-medium">
+                                {fmt.Sprint("", order.ID)}
+                            </th>
+                            <td class="px-6 py-4">
+                                {order.Email}
+                            </td>
+                            <th scope="row" class="px-6 py-4 font-medium">
+                                <span class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">{order.Status}</span>
+                            </th>
+                            <td class="px-6 py-4">
+                                {fmt.Sprintf("$%.2f", float64(order.TotalPrice) / 100)}
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+}

@@ -1,0 +1,134 @@
+package pages
+
+import (
+    "fmt"
+)
+
+templ Shipping(totalPrice int32, stripePublicKey string, userEmail string, userFullName string) {
+
+    <div id="dummy-target"></div>
+     <div class="pb-4">
+        <div class="flex gap-4 pb-6">
+            <a href="/category" class="w-1/3 border-gray-200 border-b-2  pb-4 text-center hover:border-gray-800 transition-all duration-300">Product selection</a>
+            <a href="/basket" class="w-1/3 border-gray-200 border-b-2 pb-4 text-center hover:border-gray-800 transition-all duration-300">Basket</a>
+            <a href="/shipping" class="w-1/3 font-bold text-gray-800 border-gray-800 border-b-2  pb-4 text-center hover:opacity-80 transition-all duration-300">Shipping details</a>
+
+        </div>
+        <div class="text-3xl font-bold pb-10">Shipping details</div>
+        <div class="my-4 border-gray-200 border w-full"></div>
+            <form class="flex flex-col lg:flex-row gap-8"
+                 hx-post="/api/stripe/checkout"
+                 hx-target="#checkout-response"
+                 hx-swap="none"
+            >
+
+            <div class="flex flex-1 flex-col gap-4">
+                <div class={"text-sm text-gray-400"}>Name</div>
+
+                <div class="flex flex-col">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input id="name" name="name" type="text" value={userFullName} placeholder="Example Name" required disabled
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+                </div>
+
+                <div class={"pt-8 text-sm text-gray-400"}>Address</div>
+
+                <div class={"flex space-x-4"}>
+                    <div class="flex flex-col flex-1">
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Address Name</label>
+                        <input id="address" name="address" type="text" placeholder="Example Address" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        />
+
+                    </div>
+
+                    <div class="flex flex-col flex-1">
+                        <label for="house-number" class="block text-sm font-medium text-gray-700 mb-2">House Number</label>
+                        <input id="house-number" name="house-number" type="text" placeholder="Example Number" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+
+                    </div>
+
+                </div>
+
+                <div class={"flex space-x-4"}>
+
+                    <div class="flex flex-col flex-1">
+                        <label for="postal-code" class="block text-sm font-medium text-gray-700 mb-2">Postal Code</label>
+                        <input id="postal-code" name="postal-code" type="text" placeholder="Example Postcode" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+                    </div>
+
+
+                    <div class="flex flex-col flex-1">
+                        <label for="city" class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                        <input id="city" name="city" type="text" placeholder="Example City" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+                    </div>
+
+                </div>
+
+                <div class={" pt-8 text-sm text-gray-400"}>Contact</div>
+
+                <div class={"flex space-x-4"}>
+                    <div class="flex flex-col flex-1">
+                        <div class="flex justify-between items-center">
+                            <label for="phone-number" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                            <div id="phone-validation"></div>
+                        </div>
+                        <input id="phone-number" name="phone-number" type="text" placeholder="Example Phone number" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                            hx-trigger="change, keyup delay:500ms changed"
+                             hx-post="/api/shipping/validate-phone"
+                             hx-target="#phone-validation"
+                             hx-swap="innerHTML"
+                             pattern="^\+?[0-9]{7,15}$"
+                            />
+                    </div>
+                    <div class="flex flex-col flex-1">
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input id="email" name="email" type="text" value={userEmail} placeholder="Example Email" required disabled
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"/>
+                    </div>
+                </div>
+
+                <div class="flex flex-col">
+                    <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Extra Notes</label>
+                    <textarea id="notes" name="notes" type="text" placeholder="Example Extra Notes" required maxlength="200"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 min-h-24">
+                    </textarea>
+                </div>
+            </div>
+
+            <div class="lg:w-72 w-full flex flex-col p-6 bg-hunter-green-100 rounded-xl">
+                <h1 class="font-bold text-2xl">Your Order</h1>
+                <div class="border-gray-800 border  my-8"></div>
+                <div class="flex justify-between pb-4">
+                    <h1 class="">Total Price</h1>
+                    <h1 id="total-price">
+                        {fmt.Sprintf("$%.2f", float64(totalPrice)/100)}
+                    </h1>
+                </div>
+
+                <button class="w-full text-center bg-hunter-green-800 text-white hover:opacity-80 transform transition-all duration-300 rounded-full p-2 border-gray-800 border">
+                     Checkout
+                 </button>
+                 <div id="checkout-response" class="hidden"></div>
+            </div>
+        </form>
+   </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+     <script>
+         document.body.addEventListener("htmx:afterRequest", function(evt) {
+             if (evt.detail.successful) {
+                 const res = evt.detail.xhr.response;
+                 const id = JSON.parse(res).id;
+                 const stripePubKey = JSON.parse(res).stripePublicKey ;
+                 console.log("Redirecting to Stripe Checkout with session ID:", id);
+                 const stripe = Stripe(stripePubKey);
+                 stripe.redirectToCheckout({ sessionId: id });
+             }
+         });
+     </script>
+}

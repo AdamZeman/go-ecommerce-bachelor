@@ -1,0 +1,24 @@
+package components
+
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+)
+
+templ ProductList(products []goqueries.GetProductsByCategoriesAndNameRow, page int32, isSigned bool) {
+    <input id="pagination" name="page" value={fmt.Sprint(page)} class="hidden" hx-swap-oob="true" >
+
+    for _, item := range products {
+        @ProductCard(item, isSigned)
+    }
+    <div
+        id="more-products-loader"
+        class="w-full"
+        hx-post={"/api/show-more-products"}
+        hx-trigger="revealed"
+        hx-target="#product_container"
+        hx-include="[name]"
+        hx-swap="beforeend"
+    >
+    </div>
+}

@@ -1,0 +1,165 @@
+package iomProduct
+
+import (
+    "ecomm-go/db/goqueries"
+    "fmt"
+)
+
+templ EditProduct(product goqueries.Product, specialItems []goqueries.Special) {
+     <div>
+             <div class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"></div>
+             <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50  bg-white p-8 shadow-md max-w-2xl w-[600px] rounded-xl">
+
+
+            <div class="flex justify-between mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">Edit Product</h2>
+                <a
+                   href="#"
+                   class="flex p-5 bg-masala-950 transition-all duration-300 overflow-hidden rounded-full relative justify-center items-center text-white hover:opacity-75"
+                   hx-get="/api/remove-popup"
+                   hx-trigger="click"
+                   hx-target="#modal-container"
+                   hx-swap="innerHTML"
+                >
+                    <span class="absolute font-normal text-lg">
+                        X
+                    </span>
+
+                </a>
+
+            </div>
+            <form
+                hx-post="/api/iom/edit-product"
+                hx-target="#iom-content"
+                hx-swap="innerHTML"
+             >
+                <input
+                    type="text"
+                    id="product-id"
+                    name="product-id"
+                    value={fmt.Sprint("", product.ID)}
+                    class="hidden"
+                >
+                <!-- Conversation Name -->
+                <div class="mb-6">
+                    <label for="product-name" class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                    <input
+                        type="text"
+                        id="product-name"
+                        name="product-name"
+                        value={product.Name}
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Enter product name"
+                        required
+                    >
+                </div>
+
+                <div class="mb-6">
+                    <label for="product-desc" class="block text-sm font-medium text-gray-700 mb-2">Product Description</label>
+                    <input
+                        type="text"
+                        id="product-desc"
+                        name="product-desc"
+                        value={product.Description}
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Enter product description"
+                        required
+                    >
+                </div>
+                <div class="mb-6">
+                    <label for="product-price" class="block text-sm font-medium text-gray-700 mb-2">Product Price</label>
+                    <input
+                        type="text"
+                        id="product-price"
+                        name="product-price"
+                        value={fmt.Sprint("", product.Price)}
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Enter product price"
+                        required
+                    >
+                </div>
+                <div class="mb-6">
+                    <label for="product-option1-name" class="block text-sm font-medium text-gray-700 mb-2">Product Option 1</label>
+                    <input
+                        type="text"
+                        id="product-option1-name"
+                        name="product-option1-name"
+                        value={product.Option1Name}
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Enter product option 1"
+                        required
+                    >
+                </div>
+                <div class="mb-6">
+                    <label for="product-option2-name" class="block text-sm font-medium text-gray-700 mb-2">Product Option 2</label>
+                    <input
+                        type="text"
+                        id="product-option2-name"
+                        name="product-option2-name"
+                        value={product.Option2Name}
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Enter product option 2"
+                        required
+                    >
+                </div>
+
+                <div class="mb-6">
+                    <label for="product-special-id" class="block text-sm font-medium text-gray-700 mb-2">Special Tag</label>
+                      <select id="product-special-id" name="product-special-id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                        <option value="">No Special Tag</option>
+                        for _, item := range specialItems{
+                            if product.Special.Valid && item.ID == product.Special.Int32 {
+                                <option
+                                    selected
+                                    value={fmt.Sprint(item.ID)}
+                                    class="p-6"
+                                >{item.Name}</option>
+                            } else {
+                                <option
+                                    value={fmt.Sprint(item.ID)}
+                                    class="p-6"
+                                >{item.Name}</option>
+                            }
+
+                        }
+                      </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex gap-4 justify-end">
+                    <button
+                        type="button"
+                        class="bg-red-600 text-white font-medium px-6 py-2 hover:opacity-80 transition duration-200 rounded-lg"
+                        hx-post="/api/iom/delete-product"
+                        hx-include="#product-id"
+                        hx-target="#iom-content"
+                        hx-swap="innerHTML"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="bg-hawaiian-tan-300 text-hawaiian-tan-950 font-medium px-6 py-2 hover:opacity-80 transition duration-200 rounded-lg"
+                        hx-get="/api/show-product-categories"
+                        hx-include="#product-id"
+                        hx-target="#modal-container"
+                        hx-swap="innerHTML"
+                    >
+                        Categories
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="bg-hunter-green-400 text-hunter-green-950 font-medium px-6 py-2 hover:opacity-80 transition duration-200 rounded-lg"
+                    >
+                        Confirm Edit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

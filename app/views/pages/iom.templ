@@ -1,0 +1,21 @@
+package pages
+
+import (
+    "ecomm-go/app/views/components/iomShared"
+    "ecomm-go/app/views/components/iomProduct"
+    "ecomm-go/db/goqueries"
+)
+
+
+templ IOM(products []goqueries.Product) {
+
+    <div class="flex gap-4pt-4 pb-10 ">
+        @iomShared.ActionList()
+
+        <!-- Content Area -->
+        <div id="iom-content" class="flex flex-1">
+            @iomProduct.ProductManagement(products)
+        </div>
+    </div>
+
+}

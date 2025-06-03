@@ -1,0 +1,125 @@
+package pages
+
+import (
+	"fmt"
+	"ecomm-go/types"
+)
+
+templ Orders(ordersFilled []types.OrderFilled) {
+
+    <div class="pb-4">
+        <div class="flex gap-4 pb-6">
+            <a href="/orders" class="w-1/3 font-bold text-gray-800 border-gray-800 border-b-2  pb-4 text-center hover:opacity-80 transition-all duration-300">Orders</a>
+            <a href="/favourites" class="w-1/3 border-gray-200 border-b-2  pb-4 text-center hover:border-gray-800 transition-all duration-300">Favourites</a>
+            <a href="/rooms" class="w-1/3 border-gray-200 border-b-2 pb-4 text-center hover:border-gray-800 transition-all duration-300">Messenger</a>
+        </div>
+        <div class="text-3xl font-bold pb-10">Orders</div>
+        <div class="my-4 border-gray-200 border w-full"></div>
+        <div class="flex gap-8 flex-wrap">
+
+            for _ , orderFilled := range ordersFilled{
+                {{ order := orderFilled.Order}}
+                {{ orderItems := orderFilled.OrderItems }}
+                <label class="hidden">
+                    <input id={fmt.Sprintf("id-%d", order.ID)} class="hidden" name="id" value={fmt.Sprint("",order.ID)}>
+                </label>
+
+                <div class="flex flex-col gap-4 p-4 border border-gray-200 rounded-xl">
+
+                    <div class="flex gap-10">
+                        <div class="text-xl text-gray-600">{fmt.Sprint("#", order.ID)}</div>
+                        <div class="text-lg ">{fmt.Sprintf("$%.2f", float64(order.TotalPrice)/100)}</div>
+
+                        if order.Status != "issue" {
+                            <button
+                                type="button"
+                               class="rounded-full px-2 py-1 bg-masala-950 text-white hover:opacity-80 cursor-pointer"
+                               id={fmt.Sprintf("orderDiv-%d", order.ID)}
+                               hx-post="/api/open-issue"
+                               hx-target={fmt.Sprintf("#orderDiv-%d", order.ID)}
+                               hx-include={fmt.Sprintf("#id-%d", order.ID)}
+                               hx-trigger="click"
+                            >
+                                Open Issue
+                            </button>
+                        } else {
+                            <button
+                                type="button"
+                                disabled
+                                class="rounded-full px-2 py-1 bg-yellow-600 text-white hover:opacity-80 "
+                                id={"orderDiv-%d"}
+                                hx-swap-oob=true
+                            >
+                                Issue Opened
+                            </button>
+                        }
+                    </div>
+                    <div class="flex flex-1 gap-4 flex-wrap">
+                        for _, orderItem := range orderItems {
+                            {{ itemID := fmt.Sprintf("orderItem-%d", orderItem.ID) }}
+
+                            <div id={itemID} class="flex w-[500px] gap-4 p-4 border border-gray-200 rounded-xl">
+                                <div class="w-24 h-24">
+                                    <img
+                                        src={fmt.Sprintf("https://picsum.photos/seed/%d/600/600", orderItem.ProductID)}
+                                        alt={orderItem.Name}
+                                        class="w-24 h-24 object-cover rounded-lg"
+                                    />
+                                </div>
+                                <div class="flex flex-1 flex-col gap-4">
+                                    <div class="flex justify-between">
+
+                                        <a href={templ.SafeURL(fmt.Sprint("/products/",orderItem.ProductID ))}>
+                                            <h1 class="font-semibold">{orderItem.Name}</h1>
+                                        </a>
+
+                                        <div class="group relative w-fit">
+                                            <div
+                                                class="bg-orange-200 text-orange-900 rounded-full p-1 text-xs max-w-6 overflow-hidden whitespace-nowrap transition-all duration-300 group-hover:max-w-xs group-hover:rounded-xl">
+                                                <div
+                                                    hx-trigger="click"
+                                                    hx-post="/api/orders/show-add-review"
+                                                    hx-target="#modal-container"
+                                                    hx-vals={ fmt.Sprintf(`{"product-id": %d}`, orderItem.ProductID) }
+                                                    class="inline-block transition-opacity duration-300 group-hover:opacity-100 opacity-0 cursor-pointer">
+                                                    Add Review
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-1 justify-between">
+                                        <div class="flex flex-col">
+                                            <h1 class="text-gray-600">Price</h1>
+                                            <h1>{fmt.Sprintf("$%.2f",float64(orderItem.Price)/100)}</h1>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <h1 class="text-gray-600">{orderItem.Option1Name}</h1>
+                                            <h1>{orderItem.Option1Value}</h1>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <h1 class="text-gray-600">{orderItem.Option2Name}</h1>
+                                            <h1>{orderItem.Option2Value}</h1>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <h1 class="text-gray-600">Quantity</h1>
+                                            <h1>{fmt.Sprint("",orderItem.Quantity)}</h1>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <h1 class="text-gray-600">Total Price</h1>
+                                            <h1>{fmt.Sprintf("$%.2f", float64(orderItem.Quantity) * float64(orderItem.Price) / 100)}</h1>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
+                    </div>
+
+
+                </div>
+
+            }
+        </div>
+    </div>
+}
